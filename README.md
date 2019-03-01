@@ -1,7 +1,7 @@
 # GPSinBDMAP
 GPS recevie data including latitude and longitude, and then publish the data to baidu map web, and display location dynamic in 1s.
 
-hardware:UM220-III/3-N/北斗GPS芯片/时钟授时/232输出/千寻位置MH16-L1 
+hardware:UM220-III/3-N/北斗GPS芯片/时钟授时/232输出/千寻位置MH16-L1   
 taobao link:https://item.taobao.com/item.htm?spm=a1z09.2.0.0.34e02e8d3x5iFJ&id=39425855477&_u=11sqvu1ja1a2  
 
 software:ubuntu and ROS
