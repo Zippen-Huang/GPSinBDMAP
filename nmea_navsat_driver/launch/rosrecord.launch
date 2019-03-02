@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+  <node pkg="rosbag" type="record" name="rosbag_fix" required="true" args="-O /home/bc/rosbag/fix /fix "/>
+  <node pkg="rosbag" type="record" name="rosbag_nmea_sentence" required="true" args="-O /home/bc/rosbag/nmea_sentence /nmea_sentence "/>
+  <node pkg="rosbag" type="record" name="rosbag_simplegps" required="true" args="-O /home/bc/rosbag/simplegps /simplegps "/>
+</launch>

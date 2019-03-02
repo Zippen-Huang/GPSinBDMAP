@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<launch>
+    <node pkg="nmea_navsat_driver"   name="nmea_topic_serial_reader"  type="nmea_topic_serial_reader" />
+    <node pkg="nmea_navsat_driver"   name="nmea_topic_driver"  type="nmea_topic_driver" />
+    <node pkg="nmea_navsat_driver"   name="simple_data"  type="nmea_simple_data" />
+
+</launch>

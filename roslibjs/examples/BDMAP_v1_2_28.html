@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+<style type="text/css">
+		body, html,#allmap {width: 100%;height: 100%;overflow: hidden;margin:0;font-family:"微软雅黑";}
+	</style>
+<title>地图显示</title>
+<script  src="http://api.map.baidu.com/api?v=2.0&ak=Ii2oy8BEXRtwXOW1wo0oRb4xGneV6nCm"></script>
+
+<script src="https://static.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
+<script src="../build/roslib.js"></script>
+</head>
+
+<body>
+  
+  <div id="statusIndicator">
+    <p id="connecting">
+      Connecting to rosbridge...
+    </p>
+    <p id="connected" style="color:#00D600; display:none">
+      Connected
+    </p>
+    <p id="error" style="color:#FF0000; display:none">
+      Error in the backend!
+    </p>
+    <p id="closed" style="display:none">
+      Connection closed.
+    </p>
+  </div>
+</ol>
+  <div id="allmap"></div>
+  
+<script type="text/javascript"> 
+  // Connecting to ROS
+  // -----------------
+  var ros = new ROSLIB.Ros();
+
+  // If there is an error on the backend, an 'error' emit will be emitted.
+  ros.on('error', function(error) {
+    document.getElementById('connecting').style.display = 'none';
+    document.getElementById('connected').style.display = 'none';
+    document.getElementById('closed').style.display = 'none';
+    document.getElementById('error').style.display = 'inline';
+    console.log(error);
+  });
+
+  // Find out exactly when we made a connection.
+  ros.on('connection', function() {
+    console.log('Connection made!');
+    document.getElementById('connecting').style.display = 'none';
+    document.getElementById('error').style.display = 'none';
+    document.getElementById('closed').style.display = 'none';
+    document.getElementById('connected').style.display = 'inline'; 
+  });
+
+  ros.on('close', function() {
+    console.log('Connection closed.');
+    document.getElementById('connecting').style.display = 'none';
+    document.getElementById('connected').style.display = 'none';
+    document.getElementById('closed').style.display = 'inline';
+  });
+
+  // Create a connection to the rosbridge WebSocket server.
+  ros.connect('ws://localhost:9090');
+
+  // define two global variant
+  var x = 0;
+  var y = 0;
+
+  //Subscribing to a Topic
+  //----------------------
+
+  // Like when publishing a topic, we first create a Topic object with details of the topic's name
+  // and message type. Note that we can call publish or subscribe on the same topic object.
+  var carPose = new ROSLIB.Topic({
+    ros : ros,
+    name : '/simplegps',
+    messageType : 'geometry_msgs/Pose2D'
+  });
+
+  var sample = new ROSLIB.Topic({
+    ros : ros,
+    name : '/simplegps',
+    messageType : 'geometry_msgs/Pose2D'
+  });
+  // Then we add a callback to be called every time a message is published on this topic.
+
+  carPose.subscribe(function (message) {
+    window.x = message.x;
+    window.y = message.y;
+    var map = new BMap.Map("allmap",{minZoom:3,maxZoom:19}); // 创建Map实例,设置地图允许的最小/大级别 
+
+    var gpspoint = new BMap.Point(window.x, window.y); // 创建点坐标
+    
+    // 添加带有定位的导航控件
+  var navigationControl = new BMap.NavigationControl({
+    // 靠左上角位置
+    anchor: BMAP_ANCHOR_TOP_LEFT,
+    // LARGE类型
+    type: BMAP_NAVIGATION_CONTROL_LARGE,
+    // 启用显示定位
+    enableGeolocation: true
+  });
+  map.addControl(navigationControl);
+
+
+// 添加定位控件
+  var geolocationControl = new BMap.GeolocationControl();
+  geolocationControl.addEventListener("locationSuccess", function(e){
+    // 定位成功事件
+    var address = '';
+    address += e.addressComponent.province;
+    address += e.addressComponent.city;
+    address += e.addressComponent.district;
+    address += e.addressComponent.street;
+    address += e.addressComponent.streetNumber;
+    alert("当前定位地址为：" + address);
+  });
+  geolocationControl.addEventListener("locationError",function(e){
+    // 定位失败事件
+    alert(e.message);
+  });
+  map.addControl(geolocationControl);
+
+
+    //添加地图类型控件
+	map.addControl(new BMap.MapTypeControl({
+		mapTypes:[
+            BMAP_NORMAL_MAP,
+            BMAP_HYBRID_MAP
+        ]}));	  
+    map.setCurrentCity("重庆");          // 设置地图显示的城市 此项是必须设置的
+	
+  //坐标转换完之后的回调函数
+    translateCallback = function (data){
+
+	var bdpoint = data.points[0];
+     	map.centerAndZoom(bdpoint, 12);	
+        
+    	map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放         
+	function Sample()  //标住更新的位置
+	{ 
+ 		sample.subscribe(function (message) {
+    		window.x = message.x;  //更新点坐标
+    		window.y = message.y;
+		var gpspoint = new BMap.Point(window.x, window.y); // 创建点坐标
+   		translateCallback1 = function (data)
+			{	
+			var bdpoint1 = data.points[0]	//创建点坐标
+			var marker = new BMap.Marker(bdpoint1); // 创建标注
+       			map.addOverlay(marker); // 将标注添加到地图中
+        		}
+
+		function zbzh1()   //坐标转换
+		{
+ 			var convertor = new BMap.Convertor();
+       			var pointArr = [];
+       			pointArr.push(gpspoint);
+        		convertor.translate(pointArr, 1, 5, translateCallback1)
+		}		 
+		
+		zbzh1();
+		sample.unsubscribe();
+  		});
+	}
+
+  	function xh() //无限循环
+	{
+
+		
+			setTimeout(function(){
+			Sample ();
+			xh();
+					},3000);
+		
+
+	}
+       
+   	setTimeout(xh(),3000);
+    }
+
+
+    function zbzh()   //坐标转换
+	{
+ 	var convertor = new BMap.Convertor();
+        var pointArr = [];
+        pointArr.push(gpspoint);
+        convertor.translate(pointArr, 1, 5, translateCallback)
+	}
+    
+    zbzh();
+
+    // If desired, we can unsubscribe from the topic as well.
+    carPose.unsubscribe();
+  });
+
+</script>
+
+</body>
+</html>
