@@ -3,7 +3,7 @@ GPS recevie data including latitude and longitude, and then publish the data to 
 
 hardware:UM220-III/3-N/北斗GPS芯片/时钟授时/232输出/千寻位置MH16-L1   
 taobao link:https://item.taobao.com/item.htm?spm=a1z09.2.0.0.34e02e8d3x5iFJ&id=39425855477&_u=11sqvu1ja1a2  
-![GPS product]：(https://github.com/Zippen-Huang/GPSinBDMAP/blob/master/gps.jpg)
+![GPS product](https://github.com/Zippen-Huang/GPSinBDMAP/blob/master/gps.jpg)
 
 software:ubuntu and ROS
 
@@ -24,5 +24,4 @@ $ roslaunch rosbridge_server rosbridge_websocket.launch  //launch brideg between
 ```
 step4: run BDMAP_v1_2_28.html  
 
-![effect display]：(https://github.com/Zippen-Huang/GPSinBDMAP/blob/master/gps.png)  
-![Image text](https://github.com/Zippen-Huang/AR-tag-Follower/blob/master/QQ%E5%9B%BE%E7%89%8720181127221352.jpg)
+![effect display](https://github.com/Zippen-Huang/GPSinBDMAP/blob/master/gps.png)  
